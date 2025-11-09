@@ -41,6 +41,9 @@ importers:
       '@workos-inc/node':
         specifier: ^7.72.1
         version: 7.72.1(express@5.1.0)
+      '@workos/authkit-tanstack-react-start':
+        specifier: ^0.2.0
+        version: 0.2.0(@tanstack/react-router@1.134.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-start@1.134.10(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(vite@7.1.12(@types/node@22.19.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -71,9 +74,6 @@ importers:
       tw-animate-css:
         specifier: ^1.3.6
         version: 1.4.0
-      vite-tsconfig-paths:
-        specifier: ^5.1.4
-        version: 5.1.4(typescript@5.9.3)(vite@7.1.12(@types/node@22.19.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6))
       zod:
         specifier: ^4.1.12
         version: 4.1.12
@@ -111,6 +111,9 @@ importers:
       vite:
         specifier: ^7.1.7
         version: 7.1.12(@types/node@22.19.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)
+      vite-tsconfig-paths:
+        specifier: ^5.1.4
+        version: 5.1.4(typescript@5.9.3)(vite@7.1.12(@types/node@22.19.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6))
       vitest:
         specifier: ^3.0.5
         version: 3.2.4(@types/node@22.19.0)(jiti@2.6.1)(jsdom@27.1.0)(lightningcss@1.30.2)(msw@2.11.6(@types/node@22.19.0)(typescript@5.9.3))(terser@5.44.0)(tsx@4.20.6)
@@ -1675,6 +1678,23 @@ packages:
     resolution: {integrity: sha512-cuhW6P6WJeDviT5oYE4o+n2l8qaJJxX1ea41ohWn0ZMwYMoTslTn5vpfvExsCSHKe4I6dAVUtylUo+CJaGmDFw==}
     engines: {node: '>=16'}
 
+  '@workos-inc/node@8.0.0-rc.3':
+    resolution: {integrity: sha512-euZS5tTVqhRfA6YdOQ1mIsMmSHegM1Gnqo8E1KGx+j3+s5ckGrqjKH+5lWMvcBrmI9vaex9MsM6Er9WW/2h2yA==}
+    engines: {node: '>=20.15.0'}
+
+  '@workos/authkit-session@0.1.3':
+    resolution: {integrity: sha512-UYA6tieQhRixvlQVDYHck5pEoi8+c+GS9fyaWO9UuY1d5xES+dbybB9MyMEDFoG67bJL/Dn5mJR35cf26q3D4A==}
+    engines: {node: '>=20.0.0'}
+
+  '@workos/authkit-tanstack-react-start@0.2.0':
+    resolution: {integrity: sha512-fiMXPx21j0ZDOsWcv27SudJai9Er+VQu8FlaZnvktxNzTJaBH4+Q5Sd4frUR4/XZhyRhuk3d8ctyd/Swn3FPYQ==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      '@tanstack/react-router': '>=1.0.0'
+      '@tanstack/react-start': '>=1.0.0'
+      react: ^18.0 || ^19.0
+      react-dom: ^18.0 || ^19.0
+
   abbrev@3.0.1:
     resolution: {integrity: sha512-AO2ac6pjRB3SJmGJo+v5/aK6Omggp6fsLrs6wN9bd35ulu4cCwaAU9+7ZhXjeqHVkaHThLuzH0nZr0YpCDhygg==}
     engines: {node: ^18.17.0 || >=20.5.0}
@@ -2633,6 +2653,9 @@ packages:
       next:
         optional: true
 
+  iron-session@8.0.4:
+    resolution: {integrity: sha512-9ivNnaKOd08osD0lJ3i6If23GFS2LsxyMU8Gf/uBUEgm8/8CC1hrrCHFDpMo3IFbpBgwoo/eairRsaD3c5itxA==}
+
   iron-webcrypto@0.2.8:
     resolution: {integrity: sha512-YPdCvjFMOBjXaYuDj5tiHst5CEk6Xw84Jo8Y2+jzhMceclAnb3+vNPP/CTtb5fO2ZEuXEaO4N+w62Vfko757KA==}
 
@@ -2767,6 +2790,9 @@ packages:
 
   jose@5.6.3:
     resolution: {integrity: sha512-1Jh//hEEwMhNYPDDLwXHa2ePWgWiFNNUadVmguAAw2IJ6sj9mNxV5tGXJNqlMkJAybF6Lgw1mISDxTePP/187g==}
+
+  jose@6.1.0:
+    resolution: {integrity: sha512-TTQJyoEoKcC1lscpVDCSsVgYzUDg/0Bt3WE//WiTPK6uOCQC2KZS4MpugbMWt/zyjkopgZoXhZuCi00gLudfUA==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -5818,6 +5844,26 @@ snapshots:
       - koa
       - next
 
+  '@workos-inc/node@8.0.0-rc.3':
+    dependencies:
+      iron-session: 8.0.4
+      jose: 6.1.0
+
+  '@workos/authkit-session@0.1.3':
+    dependencies:
+      '@workos-inc/node': 8.0.0-rc.3
+      iron-session: 8.0.4
+      iron-webcrypto: 1.2.1
+      jose: 6.1.0
+
+  '@workos/authkit-tanstack-react-start@0.2.0(@tanstack/react-router@1.134.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/react-start@1.134.10(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(vite@7.1.12(@types/node@22.19.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+    dependencies:
+      '@tanstack/react-router': 1.134.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@tanstack/react-start': 1.134.10(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(vite@7.1.12(@types/node@22.19.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6))
+      '@workos/authkit-session': 0.1.3
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+
   abbrev@3.0.1: {}
 
   abort-controller@3.0.0:
@@ -6804,6 +6850,12 @@ snapshots:
     optionalDependencies:
       express: 5.1.0
 
+  iron-session@8.0.4:
+    dependencies:
+      cookie: 0.7.2
+      iron-webcrypto: 1.2.1
+      uncrypto: 0.1.3
+
   iron-webcrypto@0.2.8:
     dependencies:
       buffer: 6.0.3
@@ -6897,6 +6949,8 @@ snapshots:
   jiti@2.6.1: {}
 
   jose@5.6.3: {}
+
+  jose@6.1.0: {}
 
   js-tokens@4.0.0: {}
 
