@@ -4,12 +4,16 @@ A TanStack Start application with Convex database and WorkOS authentication usin
 
 ## Features
 
-- **TanStack Start** - Full-stack React framework
-- **Convex** - Real-time database with type-safe queries
-- **WorkOS** - Enterprise-grade authentication with OTP (email/phone)
-- **Tailwind CSS** - Utility-first CSS framework
-- **TypeScript** - Type safety across the stack
+- **TanStack Start** - Full-stack React framework with file-based routing
+- **React 19** - Latest React with modern features
+- **Convex** - Real-time database with type-safe queries and mutations
+- **WorkOS AuthKit** - Enterprise-grade passwordless authentication (OTP via email)
+- **Tailwind CSS v4** - Utility-first CSS framework with modern features
+- **Shadcn UI** - Beautiful, accessible UI components built on Radix UI
+- **TypeScript** - Full type safety across the entire stack
 - **t3-oss/env** - Type-safe environment variables with runtime validation
+- **Biome** - Fast linting and formatting (replaces ESLint + Prettier)
+- **Vitest** - Fast unit testing with React Testing Library
 
 ## Getting Started
 
@@ -42,35 +46,47 @@ This will:
 
 1. Sign up at [WorkOS Dashboard](https://dashboard.workos.com)
 2. Create a new application
-3. Enable MagicAuth (passwordless authentication)
-4. Get your API Key and Client ID from the dashboard
+3. Enable **AuthKit** (passwordless authentication)
+4. Configure the redirect URI:
+   - Development: `http://localhost:3000/api/auth/callback`
+   - Production: `https://yourdomain.com/api/auth/callback`
+5. Get your **API Key** and **Client ID** from the dashboard
 
 ### 4. Configure Environment Variables
 
 This project uses [t3-oss/env](https://env.t3.gg/) for type-safe environment variables with runtime validation.
 
-Create a `.env.local` file in the root directory:
+Copy `.env.example` to `.env.local` and fill in your values:
 
 ```bash
-# Convex (server-side)
-CONVEX_URL=https://your-deployment.convex.cloud
+cp .env.example .env.local
+```
+
+Then edit `.env.local`:
+
+```bash
+# Convex Deployment (set automatically by `convex dev`)
+CONVEX_DEPLOYMENT=dev:your-team-project
 
 # Convex (client-side - must have VITE_ prefix)
 VITE_CONVEX_URL=https://your-deployment.convex.cloud
 
 # WorkOS Authentication
-WORKOS_API_KEY=sk_test_...
-WORKOS_CLIENT_ID=client_...
+WORKOS_API_KEY=sk_test_...                                    # From WorkOS Dashboard
+WORKOS_CLIENT_ID=client_...                                   # From WorkOS Dashboard
+WORKOS_REDIRECT_URI=http://localhost:3000/api/auth/callback  # Update for production
+WORKOS_COOKIE_PASSWORD=your-32-character-secret-key-here     # Generate with: openssl rand -base64 32
 
 # Node Environment (optional)
 NODE_ENV=development
 ```
 
 **Important Notes:**
-- Server-side variables: `CONVEX_URL`, `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`
-- Client-side variables must be prefixed with `VITE_`: `VITE_CONVEX_URL`
-- All environment variables are validated at runtime using Zod schemas
-- See `src/env.ts` for the full schema definition
+- **Server-side variables**: `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, `WORKOS_REDIRECT_URI`, `WORKOS_COOKIE_PASSWORD`
+- **Client-side variables** must be prefixed with `VITE_`: `VITE_CONVEX_URL`
+- **CONVEX_DEPLOYMENT** is set automatically by `convex dev` (you'll get this after running `pnpm convex:dev`)
+- **WORKOS_COOKIE_PASSWORD** must be at least 32 characters (generate with `openssl rand -base64 32`)
+- All environment variables are validated at runtime using Zod schemas in `src/env.ts`
 
 ### 5. Run the Development Server
 
@@ -92,48 +108,49 @@ The application will be available at `http://localhost:3000`.
 
 ```
 src/
-├── routes/               # File-based routing
-│   ├── __root.tsx       # Root layout with providers
-│   ├── index.tsx        # Home page (redirects to dashboard)
-│   ├── login.tsx        # Login page with OTP
-│   └── dashboard.tsx    # Protected dashboard page
-├── contexts/
-│   └── AuthContext.tsx  # Authentication state management
+├── routes/                      # File-based routing
+│   ├── __root.tsx              # Root layout with providers (Convex, WorkOS AuthKit)
+│   ├── index.tsx               # Home page
+│   ├── _authenticated.tsx      # Layout route with authentication guard
+│   ├── _authenticated/
+│   │   └── dashboard.tsx       # Protected dashboard page
+│   └── api/
+│       └── auth/
+│           └── callback.ts     # WorkOS OAuth callback handler
 ├── components/
-│   └── ui/              # UI components
+│   ├── ui/                     # Shadcn UI components
+│   │   └── button.tsx
+│   └── Header.tsx              # App header component
 ├── lib/
-│   ├── convex.ts        # Convex client setup
-│   ├── workos.ts        # WorkOS client setup
-│   ├── auth-server.ts   # Server functions for authentication
-│   └── utils.ts         # Utility functions
-└── styles.css           # Global styles
+│   ├── convex.ts               # Convex client setup
+│   └── utils.ts                # Utility functions
+├── env.ts                      # Environment variable validation (t3-oss/env)
+├── router.tsx                  # TanStack Router configuration
+└── styles.css                  # Global styles (Tailwind CSS v4)
 
 convex/
-├── schema.ts            # Database schema
-├── auth.ts              # Authentication functions
-└── _generated/          # Generated Convex types
+├── schema.ts                   # Database schema (users, sessions)
+├── auth.ts                     # Convex functions for user management
+└── _generated/                 # Generated Convex types
 ```
 
 ## Authentication Flow
 
-1. User enters email or phone number on `/login` (auto-detects type)
-2. Client calls `sendOTPCode` server function
-3. WorkOS sends OTP code via email or SMS
-4. User enters the verification code
-5. Client calls `verifyOTPCode` server function
-6. Server verifies code with WorkOS
-7. Server creates/updates user in Convex
-8. Server generates session token
-9. Client stores token and redirects to dashboard
+This app uses WorkOS AuthKit for passwordless authentication with OTP (One-Time Password):
 
-## Server Functions
+1. User accesses a protected route under `_authenticated/*` (e.g., `/dashboard`)
+2. The `_authenticated.tsx` layout loader checks authentication via `getAuth()` from WorkOS
+3. If not authenticated, user is redirected to WorkOS sign-in URL with return path
+4. WorkOS handles the OTP flow (sends email code to user)
+5. After verification, WorkOS calls back to `/api/auth/callback`
+6. The callback handler processes the callback via `handleCallbackRoute()` and establishes session
+7. User is redirected back to the original protected route
+8. User profile is stored in Convex database
 
-The app uses TanStack Start's server functions for authentication, located in `src/lib/auth-server.ts`:
-
-- `sendOTPCode` - Sends OTP via WorkOS
-- `verifyOTPCode` - Verifies OTP and creates user session
-
-Server functions are type-safe and can be called directly from client components.
+**Key Files:**
+- `src/routes/_authenticated.tsx:5-16` - Authentication guard implementation
+- `src/routes/api/auth/callback.ts` - WorkOS OAuth callback handler
+- `convex/auth.ts` - Convex database functions for user management
 
 ## Available Scripts
 
