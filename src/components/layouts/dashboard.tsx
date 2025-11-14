@@ -1,6 +1,7 @@
 "use client";
 
-import type { User } from "@workos/authkit-tanstack-react-start";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Outlet } from "@tanstack/react-router";
 // import { Link } from "@tanstack/react-router";
 import {
 	// Bell,
@@ -11,7 +12,7 @@ import {
 	// Users,
 	// Workflow,
 } from "lucide-react";
-import type React from "react";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,8 @@ import {
 	SidebarMenuItem,
 	SidebarProvider,
 } from "@/components/ui/sidebar";
+import { userSpacesQueries } from "@/queries/userSpaces";
+import { DashboardLayoutApi } from "@/routes/_dashboard";
 
 // import { Logo } from './logo';
 
@@ -64,14 +67,14 @@ const getInitials = (name: string) => {
 // 	},
 // ];
 
-export function DashboardLayout({
-	user,
-	children,
-}: {
-	user: User;
-	children: React.ReactNode;
-}) {
+export function DashboardLayout() {
+	const { user } = DashboardLayoutApi.useRouteContext();
+	const { data } = useSuspenseQuery(userSpacesQueries.byOwnerId(user.id));
+
 	const name = `${user?.firstName ?? "Sin Nombre"} ${user?.lastName ?? "Sin Apellido"}`;
+
+	console.log({ data, name });
+
 	return (
 		<SidebarProvider defaultOpen={true}>
 			<Sidebar collapsible="icon">
@@ -161,7 +164,9 @@ export function DashboardLayout({
 				</header>
 
 				{/* Content Area */}
-				<main className="flex-1 overflow-auto p-6">{children}</main>
+				<main className="flex-1 overflow-auto p-6">
+					<Outlet />
+				</main>
 			</SidebarInset>
 		</SidebarProvider>
 	);

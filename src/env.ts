@@ -3,8 +3,10 @@ import { z } from "zod";
 
 export const env = createEnv({
 	server: {
-		WORKOS_API_KEY: z.string().min(1),
 		WORKOS_CLIENT_ID: z.string().min(1),
+		WORKOS_API_KEY: z.string().min(1),
+		WORKOS_REDIRECT_URI: z.string().min(1),
+		WORKOS_COOKIE_PASSWORD: z.string().min(1),
 		NODE_ENV: z
 			.enum(["development", "production", "test"])
 			.default("development"),
@@ -20,7 +22,7 @@ export const env = createEnv({
 	 * For Node.js, use process.env
 	 * For Vite client, use import.meta.env
 	 */
-	runtimeEnv: import.meta.env,
+	runtimeEnv: typeof window !== "undefined" ? import.meta.env : process.env,
 
 	/*
 	 * Skip validation in browser (client-side code can't access server env vars)
