@@ -1,6 +1,3 @@
-"use client";
-
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Outlet } from "@tanstack/react-router";
 // import { Link } from "@tanstack/react-router";
 import {
@@ -12,7 +9,7 @@ import {
 	// Users,
 	// Workflow,
 } from "lucide-react";
-
+import { Suspense } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,8 +26,8 @@ import {
 	SidebarMenuItem,
 	SidebarProvider,
 } from "@/components/ui/sidebar";
-import { userSpacesQueries } from "@/queries/userSpaces";
-import { DashboardLayoutApi } from "@/routes/_dashboard";
+import { DashboardRoute } from "@/routes/_dashboard";
+import { UserSpaceSelect } from "../dashboard/user-space-select";
 
 // import { Logo } from './logo';
 
@@ -68,12 +65,9 @@ const getInitials = (name: string) => {
 // ];
 
 export function DashboardLayout() {
-	const { user } = DashboardLayoutApi.useRouteContext();
-	const { data } = useSuspenseQuery(userSpacesQueries.byOwnerId(user.id));
+	const { user } = DashboardRoute.useRouteContext();
 
 	const name = `${user?.firstName ?? "Sin Nombre"} ${user?.lastName ?? "Sin Apellido"}`;
-
-	console.log({ data, name });
 
 	return (
 		<SidebarProvider defaultOpen={true}>
@@ -149,6 +143,10 @@ export function DashboardLayout() {
 					{/* <Logo /> */}
 
 					<div className="flex items-center gap-4">
+						<Suspense fallback={<div>Cargando espacio...</div>}>
+							<UserSpaceSelect />
+						</Suspense>
+
 						<div className="relative w-96">
 							<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 							<Input

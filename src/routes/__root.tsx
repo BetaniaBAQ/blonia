@@ -1,8 +1,10 @@
+/// <reference types="vite/client" />
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
 	createRootRouteWithContext,
+	getRouteApi,
 	HeadContent,
 	redirect,
 	Scripts,
@@ -53,6 +55,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 	shellComponent: App,
 });
 
+export const RootRoute = getRouteApi("__root__");
+
 function App({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" suppressHydrationWarning>
@@ -70,6 +74,7 @@ function App({ children }: { children: React.ReactNode }) {
 						{children}
 					</ThemeProvider>
 				</AuthKitProvider>
+
 				<TanStackDevtools
 					config={{ position: "bottom-right" }}
 					plugins={[

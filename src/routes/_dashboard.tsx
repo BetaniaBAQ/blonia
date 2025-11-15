@@ -9,4 +9,4 @@ export const Route = createFileRoute("/_dashboard")({
 	component: DashboardLayout,
 });
 
-export const DashboardLayoutApi = getRouteApi("/_dashboard");
+export const DashboardRoute = getRouteApi("/_dashboard");
